@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
-@TestPropertySource(properties = {"spring.kafka.consumer.auto-offset-reset=earliest", "spring.datasource.url=jdbc:tc:postgresql:9.6.8:///db"})
+@TestPropertySource(properties = {"spring.kafka.consumer.auto-offset-reset=earliest", "spring.datasource.url=jdbc:tc:postgresql:15.4:///db"})
 @Testcontainers
 class DokumentEvenHandlerTest {
     @Container
