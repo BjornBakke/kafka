@@ -25,7 +25,8 @@ class DokumentEventHandler {
         ObjectMapper jsonMapper = new JsonMapper();
         DocumentEventRequest request = jsonMapper.readValue(record.value(), DocumentEventRequest.class);
 
-        log.info("Received a ProductPriceChangedEvent with productCode:{}: ", request.document().documentId);
+        log.info("MottokDocumentEventRequest på id:{}: ", request.document().documentId);
         arkivRepository.updateSideantall(request.document().documentId, request.document().numberOfPages);
+        log.info("lagret på id:{}: ", request.document().documentId);
     }
 }

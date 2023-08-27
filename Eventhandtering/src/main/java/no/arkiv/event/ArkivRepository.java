@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 interface ArkivRepository extends JpaRepository<DokumentEvent, Long> {
-    Optional<DokumentEvent> findByDokumentid(String code);
+    Optional<DokumentEvent> findByDokumentid(long code);
 
     @Modifying
     @Query("update DokumentEvent p set p.sideantall = :sideantall where p.dokumentid = :dokumentid")

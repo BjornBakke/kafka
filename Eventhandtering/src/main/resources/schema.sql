@@ -1,9 +1,8 @@
-create table dokumentevent
+CREATE TABLE dokumentevent
 (
-    id    bigint           NOT NULL AUTO_INCREMENT,
-    dokumentid  varchar(255)  not null,
-    navn  varchar(255)  not null,
-    sideantall int not null,
-    PRIMARY KEY (id),
-    UNIQUE (dokumentid)
+    id         SERIAL PRIMARY KEY,
+    dokumentid BIGINT       NOT NULL,
+    navn       VARCHAR(255) NOT NULL,
+    sideantall INT          NOT NULL,
+    CONSTRAINT unique_dokumentid UNIQUE (dokumentid)
 );

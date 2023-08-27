@@ -24,11 +24,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
-@TestPropertySource(properties = {"spring.kafka.consumer.auto-offset-reset=earliest", "spring.datasource.url=jdbc:tc:mysql:8.0.32:///db"})
+@TestPropertySource(properties = {"spring.kafka.consumer.auto-offset-reset=earliest", "spring.datasource.url=jdbc:tc:postgresql:9.6.8:///db"})
 @Testcontainers
 class DokumentEvenHandlerTest {
     @Container
     static final KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.1.1"));
+    private static final long DOKUMENTHANDTAK = 100L;
+    private static final int SIDEANTALL = 5;
     @Autowired
     private ArkivRepository arkivRepository;
     @Autowired
@@ -39,36 +41,37 @@ class DokumentEvenHandlerTest {
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
     }
 
+
     @BeforeEach
     void setUp() {
-        DokumentEvent dokumentEvent = new DokumentEvent(null, 100L, "Helsevurdering", 1);
+        DokumentEvent dokumentEvent = new DokumentEvent(null, DOKUMENTHANDTAK, "Helsevurdering", 1);
         arkivRepository.save(dokumentEvent);
     }
 
     @Test
     void dokumentChangedEvent() throws JsonProcessingException {
-        Document dokument = createDokument(5, 100L);
+        Document dokument = createDokument(SIDEANTALL, DOKUMENTHANDTAK);
         DocumentEventRequest request = new DocumentEventRequest("DOCUMENT_CREATED", dokument, null);
         kafkaTemplate.send("arkiv-dokument-v1", request.eventType(), toString(request));
         await()
                 .pollInterval(Duration.ofSeconds(3))
                 .atMost(10, SECONDS)
                 .untilAsserted(() -> {
-                    Optional<DokumentEvent> optionalProduct = arkivRepository.findByDokumentid("100");
+                    Optional<DokumentEvent> optionalProduct = arkivRepository.findByDokumentid(DOKUMENTHANDTAK);
                     Assertions.assertThat(optionalProduct).isPresent();
-                    assertThat(optionalProduct.get().getDokumentid()).isEqualTo(100L);
-                    assertThat(optionalProduct.get().getSideantall()).isEqualTo(5);
+                    assertThat(optionalProduct.get().getDokumentid()).isEqualTo(DOKUMENTHANDTAK);
+                    assertThat(optionalProduct.get().getSideantall()).isEqualTo(SIDEANTALL);
                 });
-    }
-
-    private static Document createDokument(int sideantall, long dokumenthandtak) {
-        Document document = new Document();
-        document.numberOfPages = sideantall;
-        document.documentId = dokumenthandtak;
-        return document;
     }
 
     private String toString(DocumentEventRequest event) throws JsonProcessingException {
         return new JsonMapper().writeValueAsString(event);
+    }
+
+    private Document createDokument(int sideantall, long dokumenthandtak) {
+        Document document = new Document();
+        document.numberOfPages = sideantall;
+        document.documentId = dokumenthandtak;
+        return document;
     }
 }
