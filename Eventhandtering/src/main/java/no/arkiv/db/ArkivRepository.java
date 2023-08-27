@@ -1,4 +1,4 @@
-package no.arkiv.event;
+package no.arkiv.db;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-interface ArkivRepository extends JpaRepository<DokumentEvent, Long> {
+public interface ArkivRepository extends JpaRepository<DokumentEvent, Long> {
     Optional<DokumentEvent> findByDokumentid(long code);
 
     @Modifying

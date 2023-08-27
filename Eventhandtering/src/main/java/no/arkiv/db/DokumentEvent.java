@@ -1,10 +1,10 @@
-package no.arkiv.event;
+package no.arkiv.db;
 
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "dokumentevent")
-class DokumentEvent {
+public class DokumentEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

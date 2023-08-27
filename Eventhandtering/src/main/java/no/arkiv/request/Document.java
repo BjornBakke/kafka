@@ -1,4 +1,4 @@
-package no.arkiv.event;
+package no.arkiv.request;
 
 import org.springframework.format.annotation.DateTimeFormat;
 

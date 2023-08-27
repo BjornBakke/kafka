@@ -2,6 +2,10 @@ package no.arkiv.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import no.arkiv.db.ArkivRepository;
+import no.arkiv.db.DokumentEvent;
+import no.arkiv.request.Document;
+import no.arkiv.request.DocumentEventRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

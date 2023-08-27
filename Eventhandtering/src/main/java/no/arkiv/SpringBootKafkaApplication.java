@@ -1,4 +1,4 @@
-package no.arkiv.event;
+package no.arkiv;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
