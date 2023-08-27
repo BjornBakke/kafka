@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 interface ArkivRepository extends JpaRepository<DokumentEvent, Long> {
@@ -13,5 +12,5 @@ interface ArkivRepository extends JpaRepository<DokumentEvent, Long> {
 
     @Modifying
     @Query("update DokumentEvent p set p.sideantall = :sideantall where p.dokumentid = :dokumentid")
-    void updateSideantall(@Param("dokumentid") String dokumentid, @Param("sideantall") BigDecimal sideantall);
+    void updateSideantall(@Param("dokumentid") long dokumentid, @Param("sideantall") int sideantall);
 }

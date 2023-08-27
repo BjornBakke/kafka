@@ -2,8 +2,6 @@ package no.arkiv.event;
 
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(name = "dokumentevent")
 class DokumentEvent {
@@ -13,18 +11,18 @@ class DokumentEvent {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String dokumentid;
+    private Long dokumentid;
 
     @Column(nullable = false)
     private String navn;
 
     @Column(nullable = false)
-    private BigDecimal sideantall;
+    private int sideantall;
 
     public DokumentEvent() {
     }
 
-    public DokumentEvent(Long id, String dokumentid, String navn, BigDecimal sideantall) {
+    public DokumentEvent(Long id, Long dokumentid, String navn, int sideantall) {
         this.id = id;
         this.dokumentid = dokumentid;
         this.navn = navn;
@@ -39,11 +37,11 @@ class DokumentEvent {
         this.id = id;
     }
 
-    public String getDokumentid() {
+    public Long getDokumentid() {
         return dokumentid;
     }
 
-    public void setDokumentid(String code) {
+    public void setDokumentid(Long code) {
         this.dokumentid = code;
     }
 
@@ -55,11 +53,11 @@ class DokumentEvent {
         this.navn = name;
     }
 
-    public BigDecimal getSideantall() {
+    public int getSideantall() {
         return sideantall;
     }
 
-    public void setSideantall(BigDecimal price) {
+    public void setSideantall(int price) {
         this.sideantall = price;
     }
 }

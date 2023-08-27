@@ -1,5 +1,7 @@
 package no.arkiv.event;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,11 +16,9 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.Optional;
 
-import static java.math.BigDecimal.ONE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -41,22 +41,34 @@ class DokumentEvenHandlerTest {
 
     @BeforeEach
     void setUp() {
-        DokumentEvent dokumentEvent = new DokumentEvent(null, "100", "Helsevurdering", ONE);
+        DokumentEvent dokumentEvent = new DokumentEvent(null, 100L, "Helsevurdering", 1);
         arkivRepository.save(dokumentEvent);
     }
 
     @Test
-    void dokumentChangedEvent() {
-        DokumentEventDto event = new DokumentEventDto("100", new BigDecimal("5"));
-        kafkaTemplate.send("arkiv-dokument-v1", event.dokumentid(), event);
+    void dokumentChangedEvent() throws JsonProcessingException {
+        Document dokument = createDokument(5, 100L);
+        DocumentEventRequest request = new DocumentEventRequest("DOCUMENT_CREATED", dokument, null);
+        kafkaTemplate.send("arkiv-dokument-v1", request.eventType(), toString(request));
         await()
                 .pollInterval(Duration.ofSeconds(3))
                 .atMost(10, SECONDS)
                 .untilAsserted(() -> {
                     Optional<DokumentEvent> optionalProduct = arkivRepository.findByDokumentid("100");
                     Assertions.assertThat(optionalProduct).isPresent();
-                    assertThat(optionalProduct.get().getDokumentid()).isEqualTo("100");
-                    assertThat(optionalProduct.get().getSideantall()).isEqualTo(new BigDecimal("5.00"));
+                    assertThat(optionalProduct.get().getDokumentid()).isEqualTo(100L);
+                    assertThat(optionalProduct.get().getSideantall()).isEqualTo(5);
                 });
+    }
+
+    private static Document createDokument(int sideantall, long dokumenthandtak) {
+        Document document = new Document();
+        document.numberOfPages = sideantall;
+        document.documentId = dokumenthandtak;
+        return document;
+    }
+
+    private String toString(DocumentEventRequest event) throws JsonProcessingException {
+        return new JsonMapper().writeValueAsString(event);
     }
 }
